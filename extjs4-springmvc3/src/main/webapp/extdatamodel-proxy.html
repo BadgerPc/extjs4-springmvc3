@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
+        <link rel="stylesheet" type="text/css" href="estilo.css">        
+        <script type="text/javascript" src="extjs/ext-all-dev.js"></script>
+        <script type="text/javascript" src="extjs/locale/ext-lang-pt_BR.js"></script>
+        <script type="text/javascript">
+            Ext.define('Blog', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    {name: 'id', type: 'int'},
+                    {name: 'name', type: 'string'},
+                    {name: 'url', type: 'string'}
+                ],
+                proxy: {
+                    type: 'rest',
+                    url: 'blogs',
+                    format: 'json',
+                    reader: { 
+                        type: 'json',
+                        root: ''
+                    }
+                },
+                idProperty: 'id'
+            });
+
+            Ext.onReady(function() {
+
+            	//blogs/1.json
+            	//GET
+                Blog.load(1, {
+                    success: function(blog) {
+                        console.log("Blog: ");
+                        console.log("ID: " + blog.get('id'));                        
+                        console.log("Name: " + blog.get('name'));                        
+                        console.log("URL: " + blog.get('url'));
+
+                        blog.set('name', 'Alexandre Arcanjo');
+
+                        // PUT
+                        blog.save({
+                            success: function() {
+                                console.log('O blog foi atualizado');
+                            }
+                        });
+                    }
+                });
+                
+				//blogs/2.json
+				//GET
+                Blog.load(2, {
+                    success: function(blog) {
+                        console.log("Blog: ");
+                        console.log("ID: " + blog.get('id'));                        
+                        console.log("Name: " + blog.get('name'));                        
+                        console.log("URL: " + blog.get('url'));
+
+                        //DELETE
+                        blog.destroy({
+                            success: function() {
+                                console.log('O blog foi excluido');
+							}
+                        });
+					}
+                });
+
+				var blog = Ext.create('Blog', {
+					name: 'Foo',
+					url: 'foo.com.br'
+				});
+
+				//blogs
+				// POST
+				blog.save({
+					success: function() {
+						console.log('O blog foi adicionado');
+					}
+				});
+                
+            });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

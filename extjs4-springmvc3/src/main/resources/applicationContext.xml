@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 	xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:aop="http://www.springframework.org/schema/aop" 
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+		xsi:schemaLocation="
+							http://www.springframework.org/schema/beans
+							http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+							http://www.springframework.org/schema/context
+							http://www.springframework.org/schema/context/spring-context-3.1.xsd
+							http://www.springframework.org/schema/tx
+							http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+							http://www.springframework.org/schema/aop
+							http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+							http://www.springframework.org/schema/jee
+							http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+							http://www.springframework.org/schema/jdbc
+							http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd">
+
+	<!-- Apache Derby  -->
+	<jdbc:embedded-database type="DERBY" id="dataSource">
+		<jdbc:script location="classpath:sql/ddl/create_table_blog.sql"/>
+		<jdbc:script location="classpath:sql/ddl/create_table_cliente.sql"/>
+		<jdbc:script location="classpath:sql/ddl/create_table_estado.sql"/>
+		
+		<jdbc:script location="classpath:sql/ddl/create_table_author.sql"/>		
+		<jdbc:script location="classpath:sql/ddl/create_table_book.sql"/>
+		<jdbc:script location="classpath:sql/ddl/create_table_chapter.sql"/>
+		
+		<jdbc:script location="classpath:sql/dml/insert_into_blog.sql"/>
+		<jdbc:script location="classpath:sql/dml/insert_into_cliente.sql"/>
+		<jdbc:script location="classpath:sql/dml/insert_into_estado.sql"/>
+		
+		<jdbc:script location="classpath:sql/dml/insert_into_author.sql"/>
+		<jdbc:script location="classpath:sql/dml/insert_into_book.sql"/>
+		<jdbc:script location="classpath:sql/dml/insert_into_chapter.sql"/>					
+	</jdbc:embedded-database>
+	
+	<!-- Session Factory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+	</bean>
+
+	<!-- Transaction Manager -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- Processor -->
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+ 	
+ 	<!-- Repositories -->
+ 	
+ 	<bean id="clienteRepository" class="br.com.alexandre.repository.ClienteRepository">
+ 		<property name="sessionFactory" ref="sessionFactory" />
+ 	</bean>
+ 	
+ 	<bean id="blogRepository" class="br.com.alexandre.repository.BlogRepository">
+ 		<property name="sessionFactory" ref="sessionFactory" />
+ 	</bean>
+ 	
+ 	<bean id="estadoRepository" class="br.com.alexandre.repository.EstadoRepository">
+ 		<property name="sessionFactory" ref="sessionFactory" />
+ 	</bean>
+ 	
+ 	<bean id="authorRepository" class="br.com.alexandre.repository.AuthorRepository">
+ 		<property name="sessionFactory" ref="sessionFactory" />
+ 	</bean>
+ 	
+ 	<bean id="bookRepository" class="br.com.alexandre.repository.BookRepository">
+ 		<property name="sessionFactory" ref="sessionFactory" />
+ 	</bean>
+ 	
+	<bean id="chapterRepository" class="br.com.alexandre.repository.ChapterRepository">
+ 		<property name="sessionFactory" ref="sessionFactory" />
+ 	</bean>
+</beans>

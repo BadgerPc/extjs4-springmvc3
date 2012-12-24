@@ -1,0 +1,2 @@
+INSERT INTO Cliente (nome, sexo, dataNascimento, rg, emissor, cpf, cep, logradouro, complemento, cidade, bairro, estado) VALUES ('Alexandre Arcanjo', 'M', '1986-12-16', '77.858.555-5', 'SSP/SP', '858.858.585-96', '05542-552', 'Avenida Paes de Barros, 445', NULL, 'São Paulo', 'Mooca', 'SP');
+INSERT INTO Cliente (nome, sexo, dataNascimento, rg, emissor, cpf, cep, logradouro, complemento, cidade, bairro, estado) VALUES ('Gabriela Freitas', 'F', '1989-04-15', '44.123.085-1', 'SSP/SP', '112.844.443-10', '08965-551', 'Avenida do Estado, 855', NULL, 'São Paulo', 'Mooca', 'SP');

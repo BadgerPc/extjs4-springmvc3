@@ -1,0 +1,211 @@
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
+        <link rel="stylesheet" type="text/css" href="estilo.css">        
+        <script type="text/javascript" src="extjs/ext-all-dev.js"></script>
+        <script type="text/javascript" src="extjs/locale/ext-lang-pt_BR.js"></script>
+        <script type="text/javascript">
+            Ext.onReady(function() {
+
+                // Ext.data.Store com inline data
+                var dsSexos = Ext.create('Ext.data.Store', {
+                    fields: ['sigla', 'descricao'],
+                    data: [
+                        {"sigla": 'M', "descricao": 'Masculino'},
+                        {"sigla": 'F', "descricao": 'Feminino'}
+                    ]
+                });
+           
+				// Ext.data.Store com inline data
+				var dsEstados = Ext.create('Ext.data.Store', {
+					fields: ['sigla', 'descricao'],
+					storeId: 'dsEstados',
+                	autoLoad: true,
+					proxy: {
+		                   type: 'rest',
+		                   url: 'estados',
+		                   format: 'json',
+		                   reader: { 
+		                       type: 'json',
+		                       root: ''
+		                   }
+					}					
+                 });
+
+                /* Cria Form */
+                Ext.create('Ext.form.Panel', {
+                    title: 'Cadastro de cliente',
+                    renderTo: 'formulario',
+                    width: 500,
+                    height: 420,
+                    bodyPadding: 5,
+                    labelWidth: 200,
+
+					url: 'clientes.json',
+                    
+					items: [
+	                        {
+	                            xtype: 'textfield', 
+	                            fieldLabel: 'Nome Completo', 
+	                            name: 'nome', 
+	                            allowBlank: false,
+	                            size: 70,
+	                            maxLength: 100
+	                        },
+	                        {
+	                            xtype: 'combobox', 
+	                            fieldLabel: 'Sexo', 
+	                            name: 'sexo', 
+
+	                            store: dsSexos, // Define Ext.data.Store com inline data
+	                            queryMode: 'local',  //Modo de query no Ext.data.Store
+	                            displayField: 'descricao', //Campo do Ext.data.Store a ser exibido para o usuario
+	                            valueField: 'sigla', // Campo do Ext.data.Store que representa o valor selecionado 
+	                            autoSelect: true,
+	                            editable: false,
+	                            
+	                            allowBlank: false
+	                        },
+	                        {
+	                            xtype: 'datefield',
+	                            fieldLabel: 'Data de Nascimento',
+	                            name: 'dataNascimento',
+	                            allowBlank: false,
+	                            submitFormat: 'm/d/y'
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'RG',
+	                            name: 'rg',
+	                            allowBlank: false,
+	                            regex: /\d{2}[.]\d{3}[.]\d{3}[-](\d{1}|[xX])/,
+	                            regexText: 'Digite um RG no formato 99.999.999-9',
+	                            size: 12,
+	                            maxLength: 12
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'Orgão Emissor',
+	                            name: 'emissor',
+	                            allowBlank: false,
+	                            size: 6,
+	                            maxLength: 6
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'CPF',
+	                            name: 'cpf',
+	                            allowBlank: false,
+	                            regex: /\d{3}[.]\d{3}[.]\d{3}[-]\d{2}/,
+	                            regexText: 'Digite um CPF no formato 99.999.999-99', 
+	                            size: 14,
+	                            maxLength: 14
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'CEP',
+	                            name: 'cep',
+	                            allowBlank: false,
+	                            regex: /\d{5}[-]\d{3}/,
+	                            regexText: 'Digite um CEP no formato 99999-999',
+	                            size: 9,
+	                            maxLength: 9
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'Logradouro',
+	                            name: 'logradouro',
+	                            allowBlank: false,
+	                            size: 70,
+	                            maxLength: 100
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'Complemento',
+	                            name: 'complemento',
+	                            allowBlank: true,
+	                            size: 60,
+	                            maxLength: 60
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'Cidade',
+	                            name: 'cidade',
+	                            allowBlank: false,
+	                            size: 60,
+	                            maxLength: 80
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            fieldLabel: 'Bairro',
+	                            name: 'bairro',
+	                            allowBlank: false,
+	                            size: 60,
+	                            maxLength: 80
+	                        },
+	                        {
+	                            xtype: 'combobox',
+	                            fieldLabel: 'Estado',
+	                            name: 'estado',
+
+	                            store: dsEstados, // Define Ext.data.Store com dynamic loading
+	                            queryMode: 'local', // Define o Query Mode
+	                            displayField: 'descricao', //Campo do Ext.data.Store a ser exibido para o usuario
+	                            valueField: 'sigla', // Campo do Ext.data.Store que representa o valor selecionado                         
+	                            autoSelect: true,
+	                            editable: false,
+	                            
+	                            allowBlank: false 
+	                        }
+					],
+					buttons: [
+							{
+								text: 'Enviar',
+								formBind: true,
+								handler: function() {
+									console.log('Enviando formulario');
+									
+									var form = this.up('form').getForm();
+	                                if (form.isValid()) {
+	                                    form.submit({
+	                                        success: function(form,action) {
+	                                            Ext.MessageBox.show({
+	                                                title: 'Salvar Dados',
+	                                                msg: 'Dados salvos com sucesso',
+	                                                width: 200,
+	                                                buttons: Ext.MessageBox.OK,
+	                                                icon: Ext.MessageBox.INFO
+	                                            });
+	                                        },
+	                                        failure: function(form,action) {
+	                                            Ext.MessageBox.show({
+	                                                title: 'Salvar Dados',
+	                                                msg: 'Ocorreu um erro ao salvar os dados: ' + action.response.status + ' - ' + action.response.statusText,
+	                                                width: 200,
+	                                                buttons: Ext.MessageBox.OK,
+	                                                icon: Ext.MessageBox.ERROR 
+	                                            });                                            
+	                                        }
+	                                    });
+	                                }
+								}							
+							},
+							{
+								text: 'Limpar',
+								handler: function() {
+									console.log('Limpando formulario');
+									this.up('form').getForm().reset();
+								}
+							}
+					]
+                });
+		                 
+            });
+        </script>
+    </head>
+    <body>
+    	<div id="formulario"></div>
+    </body>
+</html>

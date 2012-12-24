@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
+        <script type="text/javascript" src="extjs/ext-all-dev.js"></script>
+        <script type="text/javascript" src="extjs/locale/ext-lang-pt_BR.js"></script>
+        <script type="text/javascript">
+            Ext.define('Author', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    {name: 'id', type: 'int'},
+                    {name: 'name', type: 'string'}
+                ],
+                associations: [
+					{type: 'hasMany', model: 'Book', foreignKey: 'authorId'}
+				],              
+                proxy: {
+                    type: 'rest',
+                    url: 'authors',
+                    format: 'json',
+                    reader: { 
+                        type: 'json',
+                        root: ''
+                    }
+                },
+            });
+
+            Ext.define('Book', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    {name: 'id', type: 'int'},
+                    {name: 'title', type: 'string'},
+                    {name: 'pages', type: 'int'},
+                    {name: 'numChapters', type: 'int'},
+                    {name: 'authorId', type: 'int'}
+                ],
+                associations: [
+					{type: 'hasMany', model: 'Chapter', foreignKey: 'bookId'},
+					{type: 'belongsTo',model: 'Author', foreignKey: 'authorId'}
+				],
+                proxy: {
+                    type: 'rest',
+                    url: 'books',
+                    format: 'json',
+                    reader: { 
+                        type: 'json',
+                        root: ''
+                    }
+                },
+            
+            });
+
+            Ext.define('Chapter', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    {name: 'id', type: 'int'},
+                    {name: 'number', type: 'int'},
+                    {name: 'title', type: 'string'},
+                    {name: 'bookId', type: 'int'}
+                ],
+                associations: [
+					{type: 'belongsTo', model: 'Book', foreignKey: 'bookId'},
+				],                
+                proxy: {
+                    type: 'rest',
+                    url: 'chapters',
+                    format: 'json',
+                    reader: { 
+                        type: 'json',
+                        root: ''
+                    }
+                },
+            });
+
+            Ext.onReady(function() {
+
+                /* Carregando Livro e Autor relacionado */
+				Book.load(1, {
+					success: function(book) {
+						var author = book.getAuthor({
+							success: function(author, operation) {
+								console.log('Book: ' + book.get('title'));
+								console.log('Pages: ' + book.get('pages'));
+								console.log('Num Chapters: ' + book.get('numChapters'));								
+								console.log('Author: ' + author.get('name'));
+							}							
+						});						
+					}
+				});
+
+            });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

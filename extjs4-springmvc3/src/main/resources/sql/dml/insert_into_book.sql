@@ -1,0 +1,2 @@
+INSERT INTO Book (title, pages, numChapters, authorId) VALUES ('Desenvolvimento Java EE com Spring Framework 3', 1000, 2, 1);
+INSERT INTO Book (title, pages, numChapters, authorId) VALUES ('Estrutura de dados Fundamentais', 400, 2, 2);

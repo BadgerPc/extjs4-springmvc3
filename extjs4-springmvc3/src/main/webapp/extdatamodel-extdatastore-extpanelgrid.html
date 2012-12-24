@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
+        <link rel="stylesheet" type="text/css" href="estilo.css">        
+        <script type="text/javascript" src="extjs/ext-all-dev.js"></script>
+        <script type="text/javascript" src="extjs/locale/ext-lang-pt_BR.js"></script>
+        <script type="text/javascript">
+            Ext.define('Blog', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    {name: 'id', type: 'int'},
+                    {name: 'name', type: 'string'},
+                    {name: 'url', type: 'string'}
+                ],
+                idProperty: 'id'
+            });
+
+            Ext.define('Editar', {
+                extend: 'Ext.window.Window',
+                title: 'Editar Blog',
+                autoShow: true,
+                modal: true,
+
+                bodyPadding: 5,
+
+                width: 650,
+                height: 250,
+                layout: 'fit',
+
+                initComponent: function() {
+                    this.items = [
+                        {
+                            xtype: 'form', 
+                            items: [
+                                {
+                                    xtype: 'textfield', 
+                                    name: 'name', 
+                                    fieldLabel: 'Name',
+                                    allowBlank: false,
+                                    size: 70,
+                                    maxLength: 100
+                                },                                
+                                {
+                                    xtype: 'textfield',
+                                    name: 'url',
+                                    fieldLabel: 'URL',
+                                    allowBlank: false,
+                                    size: 70,
+                                    maxLength: 80
+                                }
+                            ]
+                        }
+                    ];
+
+                    this.buttons = [
+                        {
+                            text: 'Salvar',
+                            handler: function(button) {
+                                console.log('Salvando Registro');
+                                var win = button.up('window');
+                                var form = win.down('form');
+
+                                var record = form.getRecord();
+                                var values = form.getValues();
+
+                                record.set(values);
+
+                                win.close();
+
+                                Ext.data.StoreManager.lookup('ds').sync();
+                            }
+                        },
+                        {
+                            text: 'Cancelar',
+                            scope: this,
+                            handler: function(button) {
+                                console.log('Fechando Janela de Edicao');
+
+                                var win = button.up('window');
+                                win.close();
+                            }
+                        }
+                    ];
+
+                    this.callParent(arguments);
+                }
+
+            });
+
+            
+            Ext.onReady(function() {
+
+            	// Executa metodo GET em /blogs
+            	var ds = Ext.create('Ext.data.Store', {
+                	storeId: 'ds',
+                	autoLoad: true,
+					model: 'Blog',
+					proxy: {
+		                   type: 'rest',
+		                   url: 'blogs',
+		                   format: 'json',
+		                   reader: { 
+		                       type: 'json',
+		                       root: ''
+		                   }
+					}
+				});
+
+				var dataGrid = Ext.create('Ext.grid.Panel', {
+					renderTo: 'dataGrid',
+                    title: 'Blogs',
+					store: ds,
+					columns: [
+						{ text: 'ID', dataIndex: 'id' },
+						{ text: 'Name', dataIndex: 'name' },
+						{ text: 'URL', dataIndex: 'url' }
+					],
+					height: 200,
+					width: 600,
+					viewConfig: {
+						listeners: {
+							itemdblclick: function(view, record, node, index, e, options) {
+								console.log('Iniciando edicao de registro do blog ' + record.get('name'));
+								var edicao = Ext.create('Editar');
+								edicao.down('form').loadRecord(record);
+							}
+						}
+					}
+				});
+								
+            });
+        </script>
+    </head>    
+    <body>
+    	<div id="dataGrid"></div>
+    </body>
+</html>
